@@ -18,7 +18,8 @@ import com.google.zxing.integration.android.IntentResult;
  */
 public class ScanFragment extends Fragment {
 
-    private static final String TAG = ScanFragment.class.getSimpleName(); 
+    private static final String TAG = ScanFragment.class.getSimpleName();
+    private static final int QR_SCANNER_REQUEST_CODE = 312;
 
     @Nullable
     @Override
@@ -51,7 +52,7 @@ public class ScanFragment extends Fragment {
         switch (requestCode) {
 
             case IntentIntegrator.REQUEST_CODE: // XXX see also https://github.com/zxing/zxing/issues/291#issuecomment-256361115
-//            case QR_SCANNER_REQUEST_CODE:
+            case QR_SCANNER_REQUEST_CODE:
 
                 IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
                 if (scanResult != null) {
@@ -71,7 +72,17 @@ public class ScanFragment extends Fragment {
     private void scan() {
         Log.d(TAG, "scan: start");
 
-        IntentIntegrator integrator = new IntentIntegrator(getActivity());
+        IntentIntegrator integrator = new IntentIntegrator(getActivity()) //;
+
+                // XXX see https://github.com/zxing/zxing/issues/291#issuecomment-70174215
+        {
+
+            @Override
+            protected void startActivityForResult(Intent intent, int code) {
+                ScanFragment.this.startActivityForResult(intent, QR_SCANNER_REQUEST_CODE); // REQUEST_CODE override
+            }
+        };
+
         integrator.initiateScan();
     }
 }
