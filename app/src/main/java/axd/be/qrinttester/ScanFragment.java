@@ -20,6 +20,7 @@ public class ScanFragment extends Fragment {
 
     private static final String TAG = ScanFragment.class.getSimpleName();
     private static final int QR_SCANNER_REQUEST_CODE = 312;
+    private Button button;
 
     @Nullable
     @Override
@@ -27,8 +28,8 @@ public class ScanFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment, container, false);
 
-        Button b = (Button) rootView.findViewById(R.id.button);
-        b.setOnClickListener(new View.OnClickListener() {
+        button = (Button) rootView.findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 scan();
@@ -54,10 +55,11 @@ public class ScanFragment extends Fragment {
             case IntentIntegrator.REQUEST_CODE: // XXX see also https://github.com/zxing/zxing/issues/291#issuecomment-256361115
             case QR_SCANNER_REQUEST_CODE:
 
-                IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+                IntentResult scanResult = IntentIntegrator.parseActivityResult(IntentIntegrator.REQUEST_CODE, resultCode, data); // OMG...
                 if (scanResult != null) {
                     // handle scan result
                     Log.d(TAG, "scan: "+scanResult.getContents());
+                    button.setText(scanResult.getContents());
                     return;
                 }
                 Log.d(TAG, "scan: no scan");
